@@ -253,15 +253,26 @@ export function useDefaultsFromURLSearch() {
 
   useEffect(() => {
     if (!chainId) return
-    const parsed = queryParametersToSwapState(parsedQs)
+    // const parsed = queryParametersToSwapState(parsedQs)
+
+    const parsedDaiSwap = {
+      typedValue: '',
+      independentField: Field.INPUT,
+      recipient: null,
+      INPUT: {
+        currencyId:
+          chainId === 1 ? '0x6B175474E89094C44Da98b954EedeAC495271d0F' : '0xaD6D458402F60fD3Bd25163575031ACDce07538D'
+      },
+      OUTPUT: { currencyId: 'ETH' }
+    }
 
     dispatch(
       replaceSwapState({
-        typedValue: parsed.typedValue,
-        field: parsed.independentField,
-        inputCurrencyId: parsed[Field.INPUT].currencyId,
-        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
-        recipient: parsed.recipient
+        typedValue: parsedDaiSwap.typedValue,
+        field: parsedDaiSwap.independentField,
+        inputCurrencyId: parsedDaiSwap[Field.INPUT].currencyId,
+        outputCurrencyId: parsedDaiSwap[Field.OUTPUT].currencyId,
+        recipient: parsedDaiSwap.recipient
       })
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -223,12 +223,12 @@ export default function Swap() {
 
   // show approve flow when: no error on inputs, not approved or pending, or approved in current session
   // never show if price impact is above threshold in non expert mode
-  const showApproveFlow =
-    !swapInputError &&
-    (approval === ApprovalState.NOT_APPROVED ||
-      approval === ApprovalState.PENDING ||
-      (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
-    !(priceImpactSeverity > 3 && !isExpertMode)
+  const showApproveFlow = false
+  // !swapInputError &&
+  // (approval === ApprovalState.NOT_APPROVED ||
+  //   approval === ApprovalState.PENDING ||
+  //   (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
+  // !(priceImpactSeverity > 3 && !isExpertMode)
 
   const [dismissedToken0] = useTokenWarningDismissal(chainId, currencies[Field.INPUT])
   const [dismissedToken1] = useTokenWarningDismissal(chainId, currencies[Field.OUTPUT])
@@ -251,7 +251,7 @@ export default function Swap() {
     <>
       {showWarning && <TokenWarningCards currencies={currencies} />}
       <AppBody disabled={showWarning}>
-        <SwapPoolTabs active={'swap'} />
+        {/* <SwapPoolTabs active={'swap'} /> */}
         <Wrapper id="swap-page">
           <ConfirmSwapModal
             isOpen={showConfirm}
@@ -269,6 +269,7 @@ export default function Swap() {
 
           <AutoColumn gap={'md'}>
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               label={independentField === Field.OUTPUT && !showWrap ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
               showMaxButton={!atMaxAmountInput}
@@ -285,7 +286,7 @@ export default function Swap() {
               id="swap-currency-input"
             />
 
-            <CursorPointer>
+            {/* <CursorPointer>
               <AutoColumn justify="space-between">
                 <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
                   <ArrowWrapper clickable>
@@ -305,8 +306,9 @@ export default function Swap() {
                   ) : null}
                 </AutoRow>
               </AutoColumn>
-            </CursorPointer>
+            </CursorPointer> */}
             <CurrencyInputPanel
+              disableCurrencySelect={true}
               value={formattedAmounts[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               label={independentField === Field.INPUT && !showWrap ? 'To (estimated)' : 'To'}
