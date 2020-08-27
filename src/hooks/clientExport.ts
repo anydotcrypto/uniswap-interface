@@ -1,5 +1,7 @@
 import { Token, WETH, ChainId } from '@uniswap/sdk'
 import { Signer, Wallet, Contract, ContractFactory, BigNumber, constants, utils } from 'ethers'
+import { providers } from 'ethers'
+const { JsonRpcProvider } = providers
 import crossFetch from 'cross-fetch'
 import { MultiSender, CallType } from '@anydotcrypto/metatransactions'
 import { Fetcher, Route, Trade, TokenAmount, Percent, Price } from '@uniswap/sdk'
@@ -2482,6 +2484,53 @@ export class DaiSwapClient {
     return { digest, signature }
   }
 
+  private async permit(signer: Signer, receiver: string, dai: string, nonce: number, chainId: number) {
+    const domainSchema = [
+      { name: 'name', type: 'string' },
+      { name: 'version', type: 'string' },
+      { name: 'chainId', type: 'uint256' },
+      { name: 'verifyingContract', type: 'address' }
+    ]
+
+    const permitSchema = [
+      { name: 'holder', type: 'address' },
+      { name: 'spender', type: 'address' },
+      { name: 'nonce', type: 'uint256' },
+      { name: 'expiry', type: 'uint256' },
+      { name: 'allowed', type: 'bool' }
+    ]
+
+    const domain = {
+      name: 'Dai Stablecoin',
+      version: '1',
+      chainId,
+      verifyingContract: dai
+    }
+
+    const message = {
+      holder: await signer.getAddress(),
+      spender: receiver,
+      nonce,
+      expiry: 0,
+      allowed: true
+    }
+
+    const data = {
+      types: {
+        EIP712Domain: domainSchema,
+        Permit: permitSchema
+      },
+      domain,
+      primaryType: 'Permit',
+      message
+    }
+    const sig = splitSignature(
+      await (signer.provider as providers.JsonRpcProvider)!.send('eth_signTypedData', [await signer.getAddress(), data])
+    )
+
+    return { signature: sig }
+  }
+
   public async relay(
     amountIn: BigNumber,
     amountOutMin: BigNumber,
@@ -2500,17 +2549,14 @@ export class DaiSwapClient {
     // check the approval for the uniswap contract
     let dataTx: { data: string; to: string }
     const uniswapExchange = new UniswapExchange(this.uniswapAddress)
-
     const allowance = await daiFacced.allowance(signerAddress, this.uniswapAddress)
-    console.debug(allowance)
-
     if (allowance.eq(0)) {
       // batch with a permit
       const multisender = new MultiSender()
 
       const nonce = await daiFacced.functions.nonces(signerAddress)
       const expiry = Math.floor(Date.now() / 1000) + 20 * 60
-      const { signature } = await this.permitDAI(this.signer, this.uniswapAddress, nonce.toNumber(), expiry, daiFacced)
+      const { signature } = await this.permit(this.signer, this.uniswapAddress, nonce.toNumber(), expiry, daiFacced)
 
       const encodedDai = daiFacced.interface.encodeFunctionData('permit', [
         signerAddress,
