@@ -2482,7 +2482,7 @@ export class DaiSwapClient {
     return { digest, signature }
   }
 
-  private async permit(signer: Signer, receiver: string, dai: string, nonce: number, chainId: number) {
+  private async permit(signer: Signer, receiver: string, dai: string, nonce: number, chainId: number, expiry: number) {
     const domainSchema = [
       { name: 'name', type: 'string' },
       { name: 'version', type: 'string' },
@@ -2509,7 +2509,7 @@ export class DaiSwapClient {
       holder: await signer.getAddress(),
       spender: receiver,
       nonce,
-      expiry: 0,
+      expiry: expiry,
       allowed: true
     }
 
@@ -2553,8 +2553,16 @@ export class DaiSwapClient {
       const multisender = new MultiSender()
 
       const nonce = await daiFacced.functions.nonces(signerAddress)
-      const expiry = Math.floor(Date.now() / 1000) + 20 * 60
-      const { signature } = await this.permit(this.signer, this.uniswapAddress, nonce.toNumber(), expiry, daiFacced)
+      const expiry = Math.floor(Date.now() / 1000) + 25 * 60
+
+      const { signature } = await this.permit(
+        this.signer,
+        this.uniswapAddress,
+        daiFacced.address,
+        nonce.toNumber(),
+        this.chainId,
+        expiry
+      )
 
       const encodedDai = daiFacced.interface.encodeFunctionData('permit', [
         signerAddress,
