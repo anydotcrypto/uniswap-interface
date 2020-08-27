@@ -18,7 +18,7 @@ import { DaiSwapClient, UNISWAP_ROUTER_V3_ADDRESS } from './clientExport'
 export enum SwapCallbackState {
   INVALID,
   LOADING,
-  VALID
+  VALID,
 }
 
 interface SwapCall {
@@ -77,7 +77,7 @@ function useSwapCallArguments(
             feeOnTransfer: false,
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
-            ttl: deadline
+            ttl: deadline,
           })
         )
 
@@ -87,7 +87,7 @@ function useSwapCallArguments(
               feeOnTransfer: true,
               allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
               recipient,
-              ttl: deadline
+              ttl: deadline,
             })
           )
         }
@@ -97,12 +97,12 @@ function useSwapCallArguments(
           v1SwapArguments(trade, {
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
-            ttl: deadline
+            ttl: deadline,
           })
         )
         break
     }
-    return swapMethods.map(parameters => ({ parameters, contract }))
+    return swapMethods.map((parameters) => ({ parameters, contract }))
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade, v1Exchange])
 }
 
@@ -142,64 +142,61 @@ export function useSwapCallback(
     return {
       state: SwapCallbackState.VALID,
       callback: async function onSwap(): Promise<string> {
-        const estimatedCalls: EstimatedSwapCall[] = await Promise.all(
-          swapCalls.map(call => {
-            const {
-              parameters: { methodName, args, value },
-              contract
-            } = call
-            const options = !value || isZero(value) ? {} : { value }
+        // const estimatedCalls: EstimatedSwapCall[] = await Promise.all(
+        //   swapCalls.map((call) => {
+        //     const {
+        //       parameters: { methodName, args, value },
+        //       contract,
+        //     } = call
+        //     const options = !value || isZero(value) ? {} : { value }
 
-            return contract.estimateGas[methodName](...args, options)
-              .then(gasEstimate => {
-                return {
-                  call,
-                  gasEstimate
-                }
-              })
-              .catch(gasError => {
-                console.debug('Gas estimate failed, trying eth_call to extract error', call)
+        //     return contract.estimateGas[methodName](...args, options)
+        //       .then((gasEstimate) => {
+        //         return {
+        //           call,
+        //           gasEstimate,
+        //         }
+        //       })
+        //       .catch((gasError) => {
+        //         console.debug('Gas estimate failed, trying eth_call to extract error', call)
 
-                return contract.callStatic[methodName](...args, options)
-                  .then(result => {
-                    console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
-                    return { call, error: new Error(DEFAULT_FAILED_SWAP_ERROR) }
-                  })
-                  .catch(callError => {
-                    console.debug('Call threw error', call, callError)
-                    let errorMessage: string = DEFAULT_FAILED_SWAP_ERROR
-                    switch (callError.reason) {
-                      case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
-                      case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
-                        errorMessage =
-                          'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
-                        break
-                    }
-                    return { call, error: new Error(errorMessage) }
-                  })
-              })
-          })
-        )
+        //         return contract.callStatic[methodName](...args, options)
+        //           .then((result) => {
+        //             console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
+        //             return { call, error: new Error(DEFAULT_FAILED_SWAP_ERROR) }
+        //           })
+        //           .catch((callError) => {
+        //             console.debug('Call threw error', call, callError)
+        //             let errorMessage: string = DEFAULT_FAILED_SWAP_ERROR
+        //             switch (callError.reason) {
+        //               case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
+        //               case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
+        //                 errorMessage =
+        //                   'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
+        //                 break
+        //             }
+        //             return { call, error: new Error(errorMessage) }
+        //           })
+        //       })
+        //   })
+        // )
 
         // a successful estimation is a bignumber gas estimate and the next call is also a bignumber gas estimate
-        const successfulEstimation = estimatedCalls.find(
-          (el, ix, list): el is SuccessfulCall =>
-            'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
-        )
+        // const successfulEstimation = estimatedCalls.find(
+        //   (el, ix, list): el is SuccessfulCall =>
+        //     'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
+        // )
 
-        if (!successfulEstimation) {
-          const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
-          if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
-          throw new Error(DEFAULT_FAILED_SWAP_ERROR)
-        }
+        // if (!successfulEstimation) {
+        //   const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
+        //   if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
+        //   throw new Error(DEFAULT_FAILED_SWAP_ERROR)
+        // }
 
         const {
-          call: {
-            contract,
-            parameters: { methodName, args, value }
-          },
-          gasEstimate
-        } = successfulEstimation
+          parameters: { methodName, args, value },
+          contract,
+        } = swapCalls[0]
 
         if (!BigNumber.from(value).eq(0)) {
           console.error('Cannot send value via daiswap', value)
@@ -258,7 +255,7 @@ export function useSwapCallback(
             const hash = response
             console.log('Hash', response)
             addTransaction({ hash } as any, {
-              summary: withVersion
+              summary: withVersion,
             })
 
             return hash
@@ -315,7 +312,7 @@ export function useSwapCallback(
         //     }
         //   })
       },
-      error: null
+      error: null,
     }
   }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
 }
