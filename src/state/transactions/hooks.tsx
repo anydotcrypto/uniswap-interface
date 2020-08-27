@@ -23,11 +23,13 @@ export function useTransactionAdder(): (
       if (!account) return
       if (!chainId) return
 
-      const { hash } = response
+      const { id, hash } = response as any
+      const hashOrId = id || hash
+
       if (!hash) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({ hash, from: account, chainId, approval, summary }))
+      dispatch(addTransaction({ hash: hashOrId, from: account, chainId, approval, summary }))
     },
     [dispatch, chainId, account]
   )

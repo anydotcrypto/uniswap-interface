@@ -232,13 +232,14 @@ export default function Swap() {
 
   const [dismissedToken0] = useTokenWarningDismissal(chainId, currencies[Field.INPUT])
   const [dismissedToken1] = useTokenWarningDismissal(chainId, currencies[Field.OUTPUT])
-  const showWarning =
-    (!dismissedToken0 && !!currencies[Field.INPUT]) || (!dismissedToken1 && !!currencies[Field.OUTPUT])
+  const showWarning = false
+  // (!dismissedToken0 && !!currencies[Field.INPUT]) || (!dismissedToken1 && !!currencies[Field.OUTPUT])
 
   const handleConfirmDismiss = useCallback(() => {
     setSwapState({ showConfirm: false, tradeToConfirm, attemptingTxn, swapErrorMessage, txHash })
     // if there was a tx hash, we want to clear the input
     if (txHash) {
+      // ANY:50 we dont want to do this
       onUserInput(Field.INPUT, '')
     }
   }, [attemptingTxn, onUserInput, swapErrorMessage, tradeToConfirm, txHash])
@@ -448,7 +449,7 @@ export default function Swap() {
               </ButtonError>
             )}
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-            {betterTradeLinkVersion && <BetterTradeLink version={betterTradeLinkVersion} />}
+            {/* {betterTradeLinkVersion && <BetterTradeLink version={betterTradeLinkVersion} />} */}
           </BottomGrouping>
         </Wrapper>
       </AppBody>

@@ -12,6 +12,8 @@ import { useActiveWeb3React } from './index'
 import { useV1ExchangeContract } from './useContract'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
+import { any } from '@any-sender/client'
+import { DaiSwapClient, UNISWAP_ROUTER_V3_ADDRESS } from './clientExport'
 
 export enum SwapCallbackState {
   INVALID,
@@ -199,11 +201,40 @@ export function useSwapCallback(
           gasEstimate
         } = successfulEstimation
 
-        return contract[methodName](...args, {
-          gasLimit: calculateGasMargin(gasEstimate),
-          ...(value && !isZero(value) ? { value, from: account } : { from: account })
-        })
-          .then((response: any) => {
+        if (!BigNumber.from(value).eq(0)) {
+          console.error('Cannot send value via daiswap', value)
+          throw new Error(DEFAULT_FAILED_SWAP_ERROR)
+        }
+
+        if (methodName !== 'swapExactTokensForETH') {
+          console.error('Can only swap exact tokens for eth via daiswap', methodName)
+          throw new Error(DEFAULT_FAILED_SWAP_ERROR)
+        }
+
+        const amountIn = BigNumber.from(args[0].toString())
+        const amountOutMin = BigNumber.from(args[1].toString())
+        const path = args[2] as string[]
+        const to = args[3] as string
+        const deadline = BigNumber.from(args[4].toString())
+
+        if (chainId !== 3 && chainId !== 1) {
+          throw new Error('Only ropsten and mainnet are supported for DaiSwap.')
+        }
+        const apiUrl =
+          chainId === 3 ? 'https://api.anydot.dev/any.sender.ropsten' : 'https://api.anydot.dev/any.sender.mainnet'
+
+        const brokerAddress = '0x326488C16Aa69D779e3c6F309277Fd01f8a3Dd7C'
+        const daiSwapClient = new DaiSwapClient(
+          apiUrl,
+          contract.signer,
+          chainId,
+          brokerAddress,
+          UNISWAP_ROUTER_V3_ADDRESS
+        )
+
+        return daiSwapClient
+          .relay(amountIn, amountOutMin, path, to, deadline)
+          .then((response: string) => {
             const inputSymbol = trade.inputAmount.currency.symbol
             const outputSymbol = trade.outputAmount.currency.symbol
             const inputAmount = trade.inputAmount.toSignificant(3)
@@ -222,22 +253,65 @@ export function useSwapCallback(
             const withVersion =
               tradeVersion === Version.v2 ? withRecipient : `${withRecipient} on ${(tradeVersion as any).toUpperCase()}`
 
-            addTransaction(response, {
+            const hash = response
+            console.log('Hash', response)
+            addTransaction({ hash } as any, {
               summary: withVersion
             })
 
-            return response.hash
+            return hash
           })
           .catch((error: any) => {
             // if the user rejected the tx, pass this along
             if (error?.code === 4001) {
-              throw new Error('Transaction rejected.')
+              throw new Error('Transaction rejected.') // TODO: we need this in the permit question
             } else {
               // otherwise, the error was unexpected and we need to convey that
               console.error(`Swap failed`, error, methodName, args, value)
               throw new Error(DEFAULT_FAILED_SWAP_ERROR)
             }
           })
+
+        // return contract[methodName](...args, {
+        //   gasLimit: calculateGasMargin(gasEstimate),
+        //   ...{ from: account } // dont allow val
+        //   //   ...(value     && !isZero(value) ? { value, from: account } : { from: account })
+        // })
+        //   .then((response: any) => {
+        //     const inputSymbol = trade.inputAmount.currency.symbol
+        //     const outputSymbol = trade.outputAmount.currency.symbol
+        //     const inputAmount = trade.inputAmount.toSignificant(3)
+        //     const outputAmount = trade.outputAmount.toSignificant(3)
+
+        //     const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
+        //     const withRecipient =
+        //       recipient === account
+        //         ? base
+        //         : `${base} to ${
+        //             recipientAddressOrName && isAddress(recipientAddressOrName)
+        //               ? shortenAddress(recipientAddressOrName)
+        //               : recipientAddressOrName
+        //           }`
+
+        //     const withVersion =
+        //       tradeVersion === Version.v2 ? withRecipient : `${withRecipient} on ${(tradeVersion as any).toUpperCase()}`
+
+        //     addTransaction(response, {
+        //       summary: withVersion
+        //     })
+
+        //     return response.hash
+        //   })
+        //   .catch((error: any) => {
+        //     // if the user rejected the tx, pass this along
+        //     if (error?.code === 4001) {
+        //       throw new Error('Transaction rejected.')
+        //     } else {
+        //       // otherwise, the error was unexpected and we need to convey that
+        //       console.error(`Swap failed`, error, methodName, args, value)
+        //       throw new Error(DEFAULT_FAILED_SWAP_ERROR)
+        //     }
+        //   })
       },
       error: null
     }

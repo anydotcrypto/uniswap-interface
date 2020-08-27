@@ -138,7 +138,7 @@ export function useDerivedSwapInfo(): {
   }
 
   // get link to trade on v1, if a better rate exists
-  const v1Trade = useV1Trade(isExactIn, currencies[Field.INPUT], currencies[Field.OUTPUT], parsedAmount)
+  const v1Trade = undefined as any // useV1Trade(isExactIn, currencies[Field.INPUT], currencies[Field.OUTPUT], parsedAmount)
 
   let inputError: string | undefined
   if (!account) {
@@ -261,7 +261,7 @@ export function useDefaultsFromURLSearch() {
       recipient: null,
       INPUT: {
         currencyId:
-          chainId === 1 ? '0x6B175474E89094C44Da98b954EedeAC495271d0F' : '0xaD6D458402F60fD3Bd25163575031ACDce07538D'
+          chainId === 1 ? '0x6B175474E89094C44Da98b954EedeAC495271d0F' : '0x1038b262c3a786713def6797ad9cbc5fc20439e2'
       },
       OUTPUT: { currencyId: 'ETH' }
     }
