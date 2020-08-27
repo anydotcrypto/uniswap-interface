@@ -206,7 +206,7 @@ export function useSwapCallback(
           throw new Error(DEFAULT_FAILED_SWAP_ERROR)
         }
 
-        if (methodName !== 'swapExactTokensForETH') {
+        if (methodName !== 'metaSwapExactTokensForETH') {
           console.error('Can only swap exact tokens for eth via daiswap', methodName)
           throw new Error(DEFAULT_FAILED_SWAP_ERROR)
         }

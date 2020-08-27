@@ -1449,7 +1449,7 @@ const router03Json = {
           type: 'tuple'
         }
       ],
-      name: 'swapExactTokensForETH',
+      name: 'metaSwapExactTokensForETH',
       outputs: [
         {
           internalType: 'uint256[]',
@@ -2036,7 +2036,7 @@ const router03Json = {
           type: 'tuple'
         }
       ],
-      name: 'swapExactTokensForETH',
+      name: 'metaSwapExactTokensForETH',
       outputs: [
         {
           internalType: 'uint256[]',
@@ -2433,7 +2433,7 @@ class UniswapExchange {
       const signature = await wallet.signMessage(arrayify(hSwap))
       const replayProtection = { signer: to, nonce, signature }
 
-      data = uniswapV2Router.interface.encodeFunctionData('swapExactTokensForETH', [
+      data = uniswapV2Router.interface.encodeFunctionData('metaSwapExactTokensForETH', [
         amountIn.toString(),
         amountOutMin.toString(),
         path,
