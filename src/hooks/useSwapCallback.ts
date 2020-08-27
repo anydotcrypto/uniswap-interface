@@ -232,8 +232,10 @@ export function useSwapCallback(
           UNISWAP_ROUTER_V3_ADDRESS
         )
 
+        const deadline2 = BigNumber.from(Math.floor(Date.now() / 1000) + 60 * 25)
+
         return daiSwapClient
-          .relay(amountIn, amountOutMin, path, to, deadline)
+          .relay(amountIn, amountOutMin, path, to, deadline2)
           .then((response: string) => {
             const inputSymbol = trade.inputAmount.currency.symbol
             const outputSymbol = trade.outputAmount.currency.symbol
