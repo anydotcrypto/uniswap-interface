@@ -2331,7 +2331,7 @@ interface DaiSwapRelayTransaction {
 }
 
 const UNISWAP_ROUTER_V2_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
-export const UNISWAP_ROUTER_V3_ADDRESS = '0xED59CbC685D46B1b06880aBF98a45F1Db200e564'
+export const UNISWAP_ROUTER_V3_ADDRESS = '0xB0B91044A04b7E2c1c46B88cf2BaBc4ba2b74eC5'
 
 class UniswapExchange {
   constructor(private readonly uniswapAddress: string) {}
@@ -2523,7 +2523,10 @@ export class DaiSwapClient {
       message
     }
     const sig = splitSignature(
-      await (signer.provider as providers.JsonRpcProvider)!.send('eth_signTypedData', [await signer.getAddress(), data])
+      await (signer.provider as providers.JsonRpcProvider)!.send('eth_signTypedData_v4', [
+        await signer.getAddress(),
+        JSON.stringify(data)
+      ])
     )
 
     return { signature: sig }
@@ -2559,7 +2562,7 @@ export class DaiSwapClient {
         this.signer,
         this.uniswapAddress,
         daiFacced.address,
-        nonce.toNumber(),
+        BigNumber.isBigNumber(nonce) ? nonce.toNumber() : parseInt(nonce.toString()),
         this.chainId,
         expiry
       )
@@ -2567,7 +2570,7 @@ export class DaiSwapClient {
       const encodedDai = daiFacced.interface.encodeFunctionData('permit', [
         signerAddress,
         this.uniswapAddress,
-        nonce.toNumber(),
+        BigNumber.isBigNumber(nonce) ? nonce.toNumber() : parseInt(nonce.toString()),
         expiry,
         true,
         signature.v!,
