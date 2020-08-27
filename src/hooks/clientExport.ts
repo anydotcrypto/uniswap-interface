@@ -1,12 +1,10 @@
 import { Token, WETH, ChainId } from '@uniswap/sdk'
 import { Signer, Wallet, Contract, ContractFactory, BigNumber, constants, utils } from 'ethers'
 import { providers } from 'ethers'
-const { JsonRpcProvider } = providers
 import crossFetch from 'cross-fetch'
 import { MultiSender, CallType } from '@anydotcrypto/metatransactions'
 import { Fetcher, Route, Trade, TokenAmount, Percent, Price } from '@uniswap/sdk'
 import { splitSignature } from 'ethers/lib/utils'
-
 const { AddressZero } = constants
 const { keccak256, defaultAbiCoder, solidityKeccak256, arrayify, SigningKey } = utils
 
