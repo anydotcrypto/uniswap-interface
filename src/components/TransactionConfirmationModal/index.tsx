@@ -9,6 +9,7 @@ import { RowBetween } from '../Row'
 import { AlertTriangle, ArrowUpCircle } from 'react-feather'
 import { ButtonPrimary } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
+import { UNISWAP_ROUTER_V3_ADDRESS } from '../../hooks/clientExport'
 import Circle from '../../assets/images/blue-loader.svg'
 
 import { getEtherscanLink } from '../../utils'
@@ -68,7 +69,7 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
 function TransactionSubmittedContent({
   onDismiss,
   chainId,
-  hash
+  hash,
 }: {
   onDismiss: () => void
   hash: string | undefined
@@ -91,7 +92,7 @@ function TransactionSubmittedContent({
             Transaction Submitted
           </Text>
 
-          <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
+          <ExternalLink href={getEtherscanLink(chainId, hash, 'pending')}>
             <Text fontWeight={500} fontSize={14} color={theme.primary1}>
               View on Etherscan
             </Text>
@@ -111,7 +112,7 @@ export function ConfirmationModalContent({
   title,
   bottomContent,
   onDismiss,
-  topContent
+  topContent,
 }: {
   title: string
   onDismiss: () => void
@@ -174,7 +175,7 @@ export default function TransactionConfirmationModal({
   attemptingTxn,
   hash,
   pendingText,
-  content
+  content,
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React()
 
@@ -186,7 +187,7 @@ export default function TransactionConfirmationModal({
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
-        <TransactionSubmittedContent chainId={chainId} hash={hash} onDismiss={onDismiss} />
+        <TransactionSubmittedContent chainId={chainId} hash={UNISWAP_ROUTER_V3_ADDRESS} onDismiss={onDismiss} />
       ) : (
         content()
       )}
