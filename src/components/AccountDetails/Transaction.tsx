@@ -8,6 +8,7 @@ import { ExternalLink } from '../../theme'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
+import { UNISWAP_ROUTER_V3_ADDRESS } from '../../hooks/clientExport'
 
 const TransactionWrapper = styled.div``
 
@@ -46,9 +47,12 @@ export default function Transaction({ hash }: { hash: string }) {
     !pending &&
     (allTransactions[hash].receipt.status === 1 || typeof allTransactions[hash].receipt.status === 'undefined')
 
+  const txhash = allTransactions[hash].receipt
+    ? getEtherscanLink(chainId, allTransactions[hash].receipt.transactionHash, 'transaction')
+    : getEtherscanLink(chainId, UNISWAP_ROUTER_V3_ADDRESS, 'pending')
   return (
     <TransactionWrapper>
-      <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
+      <TransactionState href={txhash} pending={pending} success={success}>
         <RowFixed>
           <TransactionStatusText>{summary ?? hash} ↗</TransactionStatusText>
         </RowFixed>

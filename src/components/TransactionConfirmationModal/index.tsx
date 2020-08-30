@@ -52,13 +52,30 @@ function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () 
           <Text fontWeight={500} fontSize={20}>
             Waiting For Confirmation
           </Text>
-          <AutoColumn gap="12px" justify={'center'}>
-            <Text fontWeight={600} fontSize={14} color="" textAlign="center">
-              {pendingText}
-            </Text>
-          </AutoColumn>
+        </AutoColumn>
+        <AutoColumn gap="12px" justify={'center'}>
+          <Text fontWeight={600} fontSize={14} color="" textAlign="center">
+            {pendingText}
+          </Text>
+        </AutoColumn>{' '}
+        <AutoColumn style={{ margin: '10px' }}>
           <Text fontSize={12} color="#565A69" textAlign="center">
-            Confirm this transaction in your wallet
+            {'You may be asked to sign two messages:'}
+          </Text>
+        </AutoColumn>{' '}
+        <AutoColumn gap="12px" justify={'center'}>
+          <Text fontSize={12} color="#565A69" textAlign="center">
+            {'1) Authorise the DAI Permit(),'}
+          </Text>
+        </AutoColumn>
+        <AutoColumn gap="12px" justify={'center'}>
+          <Text fontSize={12} color="#565A69" textAlign="center">
+            {'2) Authorise the swap.'}
+          </Text>
+        </AutoColumn>
+        <AutoColumn style={{ margin: '10px' }}>
+          <Text fontSize={12} color="#565A69" textAlign="center">
+            {'Both messages are sent together in a single Ethereum Transaction.'}
           </Text>
         </AutoColumn>
       </Section>

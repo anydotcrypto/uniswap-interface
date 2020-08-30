@@ -147,7 +147,7 @@ export default function CurrencyInputPanel({
   showSendWithSwap = false,
   otherCurrency = null,
   id,
-  showCommonBases
+  showCommonBases,
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
 
@@ -193,7 +193,7 @@ export default function CurrencyInputPanel({
               <NumericalInput
                 className="token-amount-input"
                 value={value}
-                onUserInput={val => {
+                onUserInput={(val) => {
                   onUserInput(val)
                 }}
               />

@@ -9,6 +9,7 @@ import mint from './mint/reducer'
 import lists from './lists/reducer'
 import burn from './burn/reducer'
 import multicall from './multicall/reducer'
+import gasprice from './gasprice/reducer'
 
 import { updateVersion } from './user/actions'
 
@@ -23,10 +24,11 @@ const store = configureStore({
     mint,
     burn,
     multicall,
-    lists
+    lists,
+    gasprice,
   },
   middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  preloadedState: load({ states: PERSISTED_KEYS }),
 })
 
 store.dispatch(updateVersion())

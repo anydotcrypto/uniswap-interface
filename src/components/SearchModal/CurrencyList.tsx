@@ -27,7 +27,7 @@ export default function CurrencyList({
   selectedCurrency,
   onCurrencySelect,
   otherCurrency,
-  showSendWithSwap
+  showSendWithSwap,
 }: {
   currencies: Currency[]
   selectedCurrency: Currency
@@ -74,7 +74,7 @@ export default function CurrencyList({
                   <TYPE.main fontWeight={500}>
                     Added by user
                     <LinkStyledButton
-                      onClick={event => {
+                      onClick={(event) => {
                         event.stopPropagation()
                         if (currency instanceof Token) removeToken(chainId, currency.address)
                       }}
@@ -87,7 +87,7 @@ export default function CurrencyList({
                   <TYPE.main fontWeight={500}>
                     Found by address
                     <LinkStyledButton
-                      onClick={event => {
+                      onClick={(event) => {
                         event.stopPropagation()
                         if (currency instanceof Token) addToken(currency)
                       }}
@@ -137,7 +137,7 @@ export default function CurrencyList({
     removeToken,
     selectedCurrency,
     showSendWithSwap,
-    theme.primary1
+    theme.primary1,
   ])
 
   return (
@@ -147,7 +147,7 @@ export default function CurrencyList({
       itemCount={currencies.length + 1}
       itemSize={56}
       style={{ flex: '1' }}
-      itemKey={index => currencyKey(currencies[index])}
+      itemKey={(index) => currencyKey(currencies[index])}
     >
       {CurrencyRow}
     </FixedSizeList>

@@ -11,12 +11,27 @@ import { RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { SectionBreak } from './styleds'
 import SwapRoute from './SwapRoute'
+import { estimateGasCosts } from '../../state/gasprice/hooks'
+import { AppState } from '../../state'
+import { useSelector } from 'react-redux'
+import { utils } from 'ethers'
 
 function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
   const theme = useContext(ThemeContext)
+  // const gasPrice = useState('gasprice')
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const state = useSelector<AppState, AppState['gasprice']>((state) => state.gasprice)
+
+  const { lowestFeeEstimateEth, largestFeeEstimate, largestFeeEstimateEth } = estimateGasCosts(state)
+
+  // Compute estimated ETH the user will get back
+  const slippageWei = isExactIn
+    ? utils.parseEther(slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)!)
+    : utils.parseEther(slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)!)
+  const minimumWei = slippageWei.sub(largestFeeEstimate)
+  const minimumEth = utils.formatEther(minimumWei)
 
   return (
     <>
@@ -24,17 +39,26 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
         <RowBetween>
           <RowFixed>
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
-              {isExactIn ? 'Minimum received' : 'Maximum sold'}
+              {'Network fee (est): '}
             </TYPE.black>
-            <QuestionHelper text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed." />
+            <QuestionHelper text="The network fee (lowest to high) based on the estimated gas prices. It assumes the transaction consumes ~180k gas." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
-              {isExactIn
-                ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
-                  '-'
-                : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ??
-                  '-'}
+              {lowestFeeEstimateEth + ' to ' + largestFeeEstimateEth + ' eth'}
+            </TYPE.black>
+          </RowFixed>
+        </RowBetween>
+        <RowBetween>
+          <RowFixed>
+            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+              {isExactIn ? 'To Receive (est)' : 'Maximum sold'}
+            </TYPE.black>
+            <QuestionHelper text="It deducts slippage from the trade and the largest network fee estimate. any.sender is refunded the network fee from the swapped ETH." />
+          </RowFixed>
+          <RowFixed>
+            <TYPE.black color={theme.text1} fontSize={14}>
+              {minimumEth}
             </TYPE.black>
           </RowFixed>
         </RowBetween>
