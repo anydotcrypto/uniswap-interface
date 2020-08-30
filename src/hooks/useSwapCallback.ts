@@ -18,7 +18,7 @@ import { DaiSwapClient, UNISWAP_ROUTER_V3_ADDRESS } from './clientExport'
 export enum SwapCallbackState {
   INVALID,
   LOADING,
-  VALID,
+  VALID
 }
 
 interface SwapCall {
@@ -77,7 +77,7 @@ function useSwapCallArguments(
             feeOnTransfer: false,
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
-            ttl: deadline,
+            ttl: deadline
           })
         )
 
@@ -87,7 +87,7 @@ function useSwapCallArguments(
               feeOnTransfer: true,
               allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
               recipient,
-              ttl: deadline,
+              ttl: deadline
             })
           )
         }
@@ -97,12 +97,12 @@ function useSwapCallArguments(
           v1SwapArguments(trade, {
             allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
             recipient,
-            ttl: deadline,
+            ttl: deadline
           })
         )
         break
     }
-    return swapMethods.map((parameters) => ({ parameters, contract }))
+    return swapMethods.map(parameters => ({ parameters, contract }))
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade, v1Exchange])
 }
 
@@ -195,7 +195,7 @@ export function useSwapCallback(
 
         const {
           parameters: { methodName, args, value },
-          contract,
+          contract
         } = swapCalls[0]
 
         if (!BigNumber.from(value).eq(0)) {
@@ -203,13 +203,15 @@ export function useSwapCallback(
           throw new Error(DEFAULT_FAILED_SWAP_ERROR)
         }
 
-        if (methodName !== 'swapExactTokensForETH') {
+        if (methodName !== 'swapExactTokensForETH' && methodName !== 'swapTokensForExactETH') {
           console.error('Can only swap exact tokens for eth via daiswap', methodName)
           throw new Error(DEFAULT_FAILED_SWAP_ERROR)
         }
 
-        const amountIn = BigNumber.from(args[0].toString())
-        const amountOutMin = BigNumber.from(args[1].toString())
+        const forward = methodName === 'swapExactTokensForETH'
+
+        const amountIn = forward ? BigNumber.from(args[0].toString()) : BigNumber.from(args[1].toString())
+        const amountOutMin = forward ? BigNumber.from(args[1].toString()) : BigNumber.from(args[0].toString())
         const path = args[2] as string[]
         const to = args[3] as string
         const deadline = BigNumber.from(args[4].toString())
@@ -255,7 +257,7 @@ export function useSwapCallback(
             const hash = response
             console.log('Hash', response)
             addTransaction({ hash } as any, {
-              summary: withVersion,
+              summary: withVersion
             })
 
             return hash
@@ -312,7 +314,7 @@ export function useSwapCallback(
         //     }
         //   })
       },
-      error: null,
+      error: null
     }
   }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
 }
