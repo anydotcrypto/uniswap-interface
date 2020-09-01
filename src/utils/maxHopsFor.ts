@@ -28,5 +28,9 @@ export function maxHopsFor(currencyIn: Currency, currencyOut: Currency): number 
     return 1
   }
 
-  return 3
+  // in OutOf.eth we're only swapping DAI for eth - we know there
+  // will always be good liquidity in the direct market so we dont
+  // confuse things by offering more routes.
+  return 1
+  //   return 3
 }
