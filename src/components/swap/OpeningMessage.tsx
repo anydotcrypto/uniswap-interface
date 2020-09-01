@@ -38,23 +38,25 @@ export default function OpeningMessage() {
       <AutoColumn gap={'md'}>
         <RowBetween align="flex-start">
           <Text fontSize={12} fontWeight={'bold'} margin={'0 auto'}>
-            {'Swap DAI to ETH via any.sender and pay the fee with DAI.'}
+            {'Swap DAI to ETH via any.sender.'}
           </Text>
         </RowBetween>
         <RowBetween align="flex-start">
-          <Text fontSize={12} fontWeight={500}>
-            {'The gas fast rate is ~' +
-              utils.formatUnits(state.fast, 'gwei') +
-              ' gwei (etherchain). any.sender will try to beat it by sending the transaction at ~' +
+          <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
+            {'Fast rate is ~' + utils.formatUnits(state.fast, 'gwei') + ' gwei (etherchain). '}
+          </Text>
+        </RowBetween>
+        <RowBetween align="flex-start">
+          <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
+            {'any.sender will send the transaction at ~' +
               lowestEstimateInGwei +
-              ' gwei before quickly bumping it up. '}
+              ' gwei before quickly increasing the network fee. Optimistically catching super-low fees. '}
           </Text>
         </RowBetween>
-
         <RowBetween align="flex-start">
-          <Text fontSize={12} fontWeight={500}>
+          <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
             {
-              'Please check "Network Fee (est)" and "To Receive (est)" for the ETH that is sent to you when the swap is executed.'
+              'any.sender pays network fee upfront and it is refunded from the swap. Check "To Receive (est)" for the the ETH you should receive after the swap.'
             }
           </Text>
         </RowBetween>

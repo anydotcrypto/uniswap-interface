@@ -49,7 +49,7 @@ export default function Transaction({ hash }: { hash: string }) {
 
   const txhash = allTransactions[hash].receipt
     ? getEtherscanLink(chainId, allTransactions[hash].receipt.transactionHash, 'transaction')
-    : getEtherscanLink(chainId, UNISWAP_ROUTER_V3_ADDRESS, 'pending')
+    : getEtherscanLink(chainId, hash, 'pending')
   return (
     <TransactionWrapper>
       <TransactionState href={txhash} pending={pending} success={success}>

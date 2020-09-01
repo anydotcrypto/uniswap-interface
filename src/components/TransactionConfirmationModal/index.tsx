@@ -111,7 +111,7 @@ function TransactionSubmittedContent({
 
           <ExternalLink href={getEtherscanLink(chainId, hash, 'pending')}>
             <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-              View on Etherscan
+              View on the any.sender transaction tracker
             </Text>
           </ExternalLink>
           <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
@@ -204,7 +204,7 @@ export default function TransactionConfirmationModal({
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
-        <TransactionSubmittedContent chainId={chainId} hash={UNISWAP_ROUTER_V3_ADDRESS} onDismiss={onDismiss} />
+        <TransactionSubmittedContent chainId={chainId} hash={hash} onDismiss={onDismiss} />
       ) : (
         content()
       )}

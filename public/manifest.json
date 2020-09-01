@@ -1,6 +1,6 @@
 {
-  "short_name": "Uniswap",
-  "name": "Uniswap",
+  "short_name": "any.sender via uniswap",
+  "name": "any.sender via uniswap",
   "icons": [
     {
       "src": "./images/192x192_App_Icon.png",

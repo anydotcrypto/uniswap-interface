@@ -40,7 +40,7 @@ export function getEtherscanLink(
       return `${prefix}/token/${data}`
     }
     case 'pending': {
-      return `${prefix}/txsPending?a=${data}`
+      return `https://www.anydot.dev/relayinfo/?relayTxId=${data}`
     }
     case 'address':
     default: {

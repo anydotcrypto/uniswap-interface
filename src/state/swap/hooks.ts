@@ -5,7 +5,6 @@ import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useV1Trade } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
@@ -18,8 +17,7 @@ import { SwapState } from './reducer'
 import useToggledVersion from '../../hooks/useToggledVersion'
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
-import { useGasPriceState, estimateGasCosts, isOutputSufficientToPayFee } from '../gasprice/hooks'
-import { BigNumber, utils } from 'ethers'
+import { useGasPriceState, isOutputSufficientToPayFee } from '../gasprice/hooks'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>((state) => state.swap)

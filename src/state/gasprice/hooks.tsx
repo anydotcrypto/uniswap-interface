@@ -52,9 +52,6 @@ export function estimateGasCosts(state: GasPrice, estimatedGasUsed?: number) {
   const lowestEstimate = BigNumber.from(state.fast).sub(remove) // Compute lowest estimate
   const largestEstimate = BigNumber.from(state.fast).add(addOn) // Computer highest estimate
 
-  console.log('fast: ' + state.fast)
-  console.log('remove: ' + remove.toString())
-  console.log('lowest estimate: ' + lowestEstimate.toString())
   const lowestEstimateInGwei = Number(utils.formatUnits(lowestEstimate, 'gwei')).toFixed(0) // Format lowest
   const largestEstimateInGwei = Number(utils.formatUnits(largestEstimate, 'gwei')).toFixed(0)
 
