@@ -20,8 +20,8 @@ export default function Updater() {
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    fetch('https://www.etherchain.org/api/gasPriceOracle').then(function (response) {
-      response.json().then(function (res) {
+    fetch('https://www.etherchain.org/api/gasPriceOracle').then(function(response) {
+      response.json().then(function(res) {
         // Etherchain returns the rate in "gwei"
         // So we need to convert "gwei" to "wei".
 
