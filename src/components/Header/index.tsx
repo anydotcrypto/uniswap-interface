@@ -131,7 +131,7 @@ const NETWORK_LABELS: { [chainId in ChainId]: string | null } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
+  [ChainId.KOVAN]: 'Kovan'
 }
 
 export default function Header() {
@@ -148,7 +148,6 @@ export default function Header() {
             {/* <UniIcon>
               <img src={isDark ? LogoDark : Logo} alt="logo" />
             </UniIcon> */}
-            <TitleText fontSize={12}>This project has not received an audit. Please use at your own risk.</TitleText>
           </Title>
         </HeaderElement>
         <HeaderControls>
