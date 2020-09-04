@@ -269,7 +269,7 @@ export class DaiSwapClient {
         amountIn,
         this.signer,
         this.brokerAddress,
-        31000, // lower overhead for just the trade, looks to be ~10k higher than estimate. Can reduce to 27-28k
+        45000, // lower overhead for just the trade, looks to be ~10k higher than estimate. Should be enough to cover our refund transactions.
         deadline
       )
     }
