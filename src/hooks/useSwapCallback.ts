@@ -5,14 +5,12 @@ import { useMemo } from 'react'
 import { BIPS_BASE, DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
-import isZero from '../utils/isZero'
+import { getRouterContract, isAddress, shortenAddress } from '../utils'
 import v1SwapArguments from '../utils/v1SwapArguments'
 import { useActiveWeb3React } from './index'
 import { useV1ExchangeContract } from './useContract'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
-import { any } from '@any-sender/client'
 import { DaiSwapClient, UNISWAP_ROUTER_V3_ADDRESS } from './clientExport'
 
 export enum SwapCallbackState {
@@ -142,57 +140,6 @@ export function useSwapCallback(
     return {
       state: SwapCallbackState.VALID,
       callback: async function onSwap(): Promise<string> {
-        // const estimatedCalls: EstimatedSwapCall[] = await Promise.all(
-        //   swapCalls.map((call) => {
-        //     const {
-        //       parameters: { methodName, args, value },
-        //       contract,
-        //     } = call
-        //     const options = !value || isZero(value) ? {} : { value }
-
-        //     return contract.estimateGas[methodName](...args, options)
-        //       .then((gasEstimate) => {
-        //         return {
-        //           call,
-        //           gasEstimate,
-        //         }
-        //       })
-        //       .catch((gasError) => {
-        //         console.debug('Gas estimate failed, trying eth_call to extract error', call)
-
-        //         return contract.callStatic[methodName](...args, options)
-        //           .then((result) => {
-        //             console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
-        //             return { call, error: new Error(DEFAULT_FAILED_SWAP_ERROR) }
-        //           })
-        //           .catch((callError) => {
-        //             console.debug('Call threw error', call, callError)
-        //             let errorMessage: string = DEFAULT_FAILED_SWAP_ERROR
-        //             switch (callError.reason) {
-        //               case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
-        //               case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
-        //                 errorMessage =
-        //                   'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
-        //                 break
-        //             }
-        //             return { call, error: new Error(errorMessage) }
-        //           })
-        //       })
-        //   })
-        // )
-
-        // a successful estimation is a bignumber gas estimate and the next call is also a bignumber gas estimate
-        // const successfulEstimation = estimatedCalls.find(
-        //   (el, ix, list): el is SuccessfulCall =>
-        //     'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
-        // )
-
-        // if (!successfulEstimation) {
-        //   const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
-        //   if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
-        //   throw new Error(DEFAULT_FAILED_SWAP_ERROR)
-        // }
-
         const {
           parameters: { methodName, args, value },
           contract,
@@ -222,7 +169,7 @@ export function useSwapCallback(
         const apiUrl =
           chainId === 3 ? 'https://api.anydot.dev/any.sender.ropsten' : 'https://api.anydot.dev/any.sender.mainnet'
 
-        const brokerAddress = '0x326488C16Aa69D779e3c6F309277Fd01f8a3Dd7C'
+        const brokerAddress = '0xcc43c45aec80ec6be6b5bb28966e8249f9fb1c4d'
         const daiSwapClient = new DaiSwapClient(
           apiUrl,
           contract.signer,
@@ -272,47 +219,6 @@ export function useSwapCallback(
               throw new Error(DEFAULT_FAILED_SWAP_ERROR)
             }
           })
-
-        // return contract[methodName](...args, {
-        //   gasLimit: calculateGasMargin(gasEstimate),
-        //   ...{ from: account } // dont allow val
-        //   //   ...(value     && !isZero(value) ? { value, from: account } : { from: account })
-        // })
-        //   .then((response: any) => {
-        //     const inputSymbol = trade.inputAmount.currency.symbol
-        //     const outputSymbol = trade.outputAmount.currency.symbol
-        //     const inputAmount = trade.inputAmount.toSignificant(3)
-        //     const outputAmount = trade.outputAmount.toSignificant(3)
-
-        //     const base = `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`
-        //     const withRecipient =
-        //       recipient === account
-        //         ? base
-        //         : `${base} to ${
-        //             recipientAddressOrName && isAddress(recipientAddressOrName)
-        //               ? shortenAddress(recipientAddressOrName)
-        //               : recipientAddressOrName
-        //           }`
-
-        //     const withVersion =
-        //       tradeVersion === Version.v2 ? withRecipient : `${withRecipient} on ${(tradeVersion as any).toUpperCase()}`
-
-        //     addTransaction(response, {
-        //       summary: withVersion
-        //     })
-
-        //     return response.hash
-        //   })
-        //   .catch((error: any) => {
-        //     // if the user rejected the tx, pass this along
-        //     if (error?.code === 4001) {
-        //       throw new Error('Transaction rejected.')
-        //     } else {
-        //       // otherwise, the error was unexpected and we need to convey that
-        //       console.error(`Swap failed`, error, methodName, args, value)
-        //       throw new Error(DEFAULT_FAILED_SWAP_ERROR)
-        //     }
-        //   })
       },
       error: null,
     }
