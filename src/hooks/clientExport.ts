@@ -22,7 +22,7 @@ interface DaiSwapRelayTransaction {
   type: 'daiswap'
 }
 
-export const UNISWAP_ROUTER_V3_ADDRESS = '0xa288c8a6af0e9e25046b674b73845bb49aaff39d'
+export const UNISWAP_ROUTER_V3_ADDRESS = '0xc31178f913f99663bdf0ff03aa456794b183592c'
 
 class UniswapExchange {
   constructor(private readonly uniswapAddress: string) {}
@@ -71,8 +71,6 @@ class UniswapExchange {
       const nonce = Date.now()
 
       const gasRefund = {
-        token: AddressZero,
-        exchangeRate: 0,
         gasPayer: gasPayer,
         gasOverhead: gasOverhead, // Looks like the transaction is doing some weird discounting, so 21k provides ±500 extra gas.
       }
@@ -84,7 +82,7 @@ class UniswapExchange {
           'address[]',
           'address',
           'uint',
-          'tuple(address token, uint256 exchangeRate, address gasPayer, uint256 gasOverhead)',
+          'tuple(address gasPayer, uint256 gasOverhead)',
           'address',
           'uint',
           'uint',
