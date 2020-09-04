@@ -242,7 +242,7 @@ export class DaiSwapClient {
         amountIn,
         this.signer,
         this.brokerAddress,
-        70000, // higher overhead for batch
+        80000, // higher overhead for batch
         deadline
       )
 
