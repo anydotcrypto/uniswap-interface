@@ -169,7 +169,7 @@ export function useSwapCallback(
           chainId === 3 ? 'https://api.anydot.dev/any.sender.ropsten' : 'https://api.anydot.dev/any.sender.mainnet'
         const uniswap_router = chainId === 3 ? UNISWAP_ROUTER_V3_ADDRESS_ROPSTEN : UNISWAP_ROUTER_V3_ADDRESS_MAINNET
         const brokerAddress =
-          chainId === 3 ? '0xcc43c45aec80ec6be6b5bb28966e8249f9fb1c4d' : '0x0Dd8B8525a3e6488Bb07d3ADed8eb3d9d62a395e'
+          chainId === 3 ? '0x0dd8b8525a3e6488bb07d3aded8eb3d9d62a395e' : '0x0Dd8B8525a3e6488Bb07d3ADed8eb3d9d62a395e'
         const daiSwapClient = new DaiSwapClient(apiUrl, contract.signer, chainId, brokerAddress, uniswap_router)
 
         const deadline2 = BigNumber.from(Math.floor(Date.now() / 1000) + 60 * 25)
@@ -196,7 +196,6 @@ export function useSwapCallback(
               tradeVersion === Version.v2 ? withRecipient : `${withRecipient} on ${(tradeVersion as any).toUpperCase()}`
 
             const hash = response
-            console.log('Hash', response)
             addTransaction({ hash } as any, {
               summary: withVersion,
             })

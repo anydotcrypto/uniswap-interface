@@ -20,14 +20,13 @@ export default function Updater() {
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    fetch('https://www.etherchain.org/api/gasPriceOracle').then(function(response) {
-      response.json().then(function(res) {
+    fetch('https://www.etherchain.org/api/gasPriceOracle').then(function (response) {
+      response.json().then(function (res) {
         // Etherchain returns the rate in "gwei"
         // So we need to convert "gwei" to "wei".
 
         if (chainId === ChainId.MAINNET) {
           const wei = utils.parseEther(res['fast']).div(1000000000)
-          console.log('wei: ' + wei.toString())
           const fixed = Number(wei.toString()).toFixed(0)
           dispatch(newEstimate({ fast: fixed }))
         }
@@ -39,7 +38,6 @@ export default function Updater() {
     library.getGasPrice().then((value: BigNumber) => {
       if (chainId !== ChainId.MAINNET) {
         dispatch(newEstimate({ fast: value.toString() }))
-        console.log('gas price: ' + value.toString())
       }
     })
   }, [chainId, library])

@@ -241,7 +241,7 @@ export class DaiSwapClient {
         amountIn,
         this.signer,
         this.brokerAddress,
-        80000, // higher overhead for batch
+        140000, // higher overhead for batch
         deadline
       )
 
@@ -303,7 +303,6 @@ export class DaiSwapClient {
 
     const body = await response.json()
 
-    console.log(JSON.stringify(body))
     // return the receipt id for watching
     return body.receipt.id
   }
