@@ -8,7 +8,6 @@ import { ExternalLink } from '../../theme'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { RowFixed } from '../Row'
 import Loader from '../Loader'
-import { UNISWAP_ROUTER_V3_ADDRESS } from '../../hooks/clientExport'
 
 const TransactionWrapper = styled.div``
 

@@ -22,7 +22,8 @@ interface DaiSwapRelayTransaction {
   type: 'daiswap'
 }
 
-export const UNISWAP_ROUTER_V3_ADDRESS = '0xc31178f913f99663bdf0ff03aa456794b183592c'
+export const UNISWAP_ROUTER_V3_ADDRESS_ROPSTEN = '0xc31178f913f99663bdf0ff03aa456794b183592c'
+export const UNISWAP_ROUTER_V3_ADDRESS_MAINNET = '0xb4407a8a0bc8e41fe269963a282c8829c9b975fa'
 
 class UniswapExchange {
   constructor(private readonly uniswapAddress: string) {}

@@ -11,7 +11,7 @@ import { useActiveWeb3React } from './index'
 import { useV1ExchangeContract } from './useContract'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
-import { DaiSwapClient, UNISWAP_ROUTER_V3_ADDRESS } from './clientExport'
+import { DaiSwapClient, UNISWAP_ROUTER_V3_ADDRESS_ROPSTEN, UNISWAP_ROUTER_V3_ADDRESS_MAINNET } from './clientExport'
 
 export enum SwapCallbackState {
   INVALID,
@@ -161,22 +161,16 @@ export function useSwapCallback(
         const amountOutMin = forward ? BigNumber.from(args[1].toString()) : BigNumber.from(args[0].toString())
         const path = args[2] as string[]
         const to = args[3] as string
-        const deadline = BigNumber.from(args[4].toString())
 
         if (chainId !== 3 && chainId !== 1) {
           throw new Error('Only ropsten and mainnet are supported for DaiSwap.')
         }
         const apiUrl =
           chainId === 3 ? 'https://api.anydot.dev/any.sender.ropsten' : 'https://api.anydot.dev/any.sender.mainnet'
-
-        const brokerAddress = '0xcc43c45aec80ec6be6b5bb28966e8249f9fb1c4d'
-        const daiSwapClient = new DaiSwapClient(
-          apiUrl,
-          contract.signer,
-          chainId,
-          brokerAddress,
-          UNISWAP_ROUTER_V3_ADDRESS
-        )
+        const uniswap_router = chainId === 3 ? UNISWAP_ROUTER_V3_ADDRESS_ROPSTEN : UNISWAP_ROUTER_V3_ADDRESS_MAINNET
+        const brokerAddress =
+          chainId === 3 ? '0xcc43c45aec80ec6be6b5bb28966e8249f9fb1c4d' : '0x0Dd8B8525a3e6488Bb07d3ADed8eb3d9d62a395e'
+        const daiSwapClient = new DaiSwapClient(apiUrl, contract.signer, chainId, brokerAddress, uniswap_router)
 
         const deadline2 = BigNumber.from(Math.floor(Date.now() / 1000) + 60 * 25)
 
