@@ -41,7 +41,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Network fee (est): '}
             </TYPE.black>
-            <QuestionHelper text="Estimated network fee (lowest to high) based on quotes from etherchain." />
+            <QuestionHelper text="Estimated network fee low to high." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>

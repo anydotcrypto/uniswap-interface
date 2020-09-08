@@ -1,5 +1,5 @@
 import { Token, WETH, ChainId } from '@uniswap/sdk'
-import { Signer, ContractFactory, BigNumber, constants, utils } from 'ethers'
+import { Signer, ContractFactory, BigNumber, utils } from 'ethers'
 import { providers } from 'ethers'
 import crossFetch from 'cross-fetch'
 import { MultiSender, CallType } from '@anydotcrypto/metatransactions'
@@ -7,7 +7,6 @@ import { Fetcher, Route, Trade, TokenAmount, Percent, Price } from '@uniswap/sdk
 import { splitSignature } from 'ethers/lib/utils'
 import daiJson from './contractAbi/DAI.json'
 import router03Json from './contractAbi/router03.json'
-const { AddressZero } = constants
 const { keccak256, defaultAbiCoder, arrayify } = utils
 
 const DAIMainnet = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18)
@@ -241,7 +240,7 @@ export class DaiSwapClient {
         amountIn,
         this.signer,
         this.brokerAddress,
-        140000, // higher overhead for batch
+        132000, // higher overhead for batch
         deadline
       )
 
@@ -268,7 +267,7 @@ export class DaiSwapClient {
         amountIn,
         this.signer,
         this.brokerAddress,
-        45000, // lower overhead for just the trade, looks to be ~10k higher than estimate. Should be enough to cover our refund transactions.
+        40000, // lower overhead for just the trade, looks to be ~10k higher than estimate. Should be enough to cover our refund transactions.
         deadline
       )
     }
@@ -280,7 +279,7 @@ export class DaiSwapClient {
       to: dataTx.to,
       data: dataTx.data,
       type: 'daiswap',
-      chainId: 3,
+      chainId: this.chainId as 1 | 3,
       from: signerAddress,
       gasLimit: estimatedGas.toNumber() + 10000, // Extra overhead to be safe
     }

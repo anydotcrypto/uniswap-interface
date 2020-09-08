@@ -19,26 +19,24 @@ export default function Updater() {
   const { chainId, library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
-  useEffect(() => {
-    fetch('https://www.etherchain.org/api/gasPriceOracle').then(function (response) {
-      response.json().then(function (res) {
-        // Etherchain returns the rate in "gwei"
-        // So we need to convert "gwei" to "wei".
+  // useEffect(() => {
+  //   fetch('https://www.etherchain.org/api/gasPriceOracle').then(function (response) {
+  //     response.json().then(function (res) {
+  //       // Etherchain returns the rate in "gwei"
+  //       // So we need to convert "gwei" to "wei".
 
-        if (chainId === ChainId.MAINNET) {
-          const wei = utils.parseEther(res['fast']).div(1000000000)
-          const fixed = Number(wei.toString()).toFixed(0)
-          dispatch(newEstimate({ fast: fixed }))
-        }
-      })
-    })
-  })
+  //       if (chainId === ChainId.MAINNET) {
+  //         const wei = utils.parseEther(res['fast']).div(1000000000)
+  //         const fixed = Number(wei.toString()).toFixed(0)
+  //         dispatch(newEstimate({ fast: fixed }))
+  //       }
+  //     })
+  //   })
+  // })
   useEffect(() => {
     if (!library) return
     library.getGasPrice().then((value: BigNumber) => {
-      if (chainId !== ChainId.MAINNET) {
-        dispatch(newEstimate({ fast: value.toString() }))
-      }
+      dispatch(newEstimate({ fast: value.toString() }))
     })
   }, [chainId, library])
 

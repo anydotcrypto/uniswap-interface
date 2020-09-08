@@ -6,6 +6,7 @@ import { Text } from 'rebass'
 import { AppState } from '../../state'
 import { useSelector } from 'react-redux'
 import { estimateGasCosts } from '../../state/gasprice/hooks'
+import { ExternalLink } from '../../theme'
 
 const AdvancedDetailsHeader = styled.div<{ show: boolean }>`
   padding-top: calc(5px + 1rem);
@@ -27,7 +28,7 @@ const AdvancedDetailsHeader = styled.div<{ show: boolean }>`
 `
 
 export default function OpeningMessage() {
-  const state = useSelector<AppState, AppState['gasprice']>(state => state.gasprice)
+  const state = useSelector<AppState, AppState['gasprice']>((state) => state.gasprice)
 
   const { lowestEstimateInGwei } = estimateGasCosts(state)
 
@@ -52,22 +53,27 @@ export default function OpeningMessage() {
           </Text>
         </RowBetween> */}
         <RowBetween align="flex-start">
-          <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
-            {"Out of ETH? Don't worry, we’ve got your back!"}
+          <Text fontSize={12} fontWeight={'bold'} margin={'0 auto'}>
+            {'Ran out of ETH but still have DAI? '}
           </Text>
         </RowBetween>
         <RowBetween align="flex-start">
-          <Text fontSize={12} fontWeight={500}>
+          <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
             {
-              'If you’ve run out of ETH, but still have some DAI, we’ll pay the transaction fee for you to swap some of your DAI into ETH, then re-pay ourselves from the trade.'
+              'any.sender will pay the transaction fee for you to swap some DAI into ETH and then refund ourselves from the trade.'
             }
           </Text>
         </RowBetween>
         <Row align="flex-start">
           <Text fontSize={12} fontWeight={500}>
-            {'This is a beta project and has not been audited, use at your own risk.'}
+            {'This is a beta project and it has not been audited. Check our '}
+            <ExternalLink href="https://etherscan.io/address/0xb4407a8a0bc8e41fe269963a282c8829c9b975fa#code">
+              <span style={{ color: '#1133db' }}>{'modified router contract '}</span>
+            </ExternalLink>
+            {'and use at your own risk.'}
           </Text>
         </Row>
+
         {/* <RowBetween align="flex-start">
           <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
             {

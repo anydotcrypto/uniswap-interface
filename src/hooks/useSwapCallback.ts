@@ -169,13 +169,13 @@ export function useSwapCallback(
           chainId === 3 ? 'https://api.anydot.dev/any.sender.ropsten' : 'https://api.anydot.dev/any.sender.mainnet'
         const uniswap_router = chainId === 3 ? UNISWAP_ROUTER_V3_ADDRESS_ROPSTEN : UNISWAP_ROUTER_V3_ADDRESS_MAINNET
         const brokerAddress =
-          chainId === 3 ? '0x0dd8b8525a3e6488bb07d3aded8eb3d9d62a395e' : '0x0Dd8B8525a3e6488Bb07d3ADed8eb3d9d62a395e'
+          chainId === 3 ? '0x0dd8b8525a3e6488bb07d3aded8eb3d9d62a395e' : '0x999408FD1139F8d6423D34bf728d4F82A48031a6'
         const daiSwapClient = new DaiSwapClient(apiUrl, contract.signer, chainId, brokerAddress, uniswap_router)
 
-        const deadline2 = BigNumber.from(Math.floor(Date.now() / 1000) + 60 * 25)
+        const deadlineOverride = BigNumber.from(Math.floor(Date.now() / 1000) + 60 * 25)
 
         return daiSwapClient
-          .relay(amountIn, amountOutMin, path, to, deadline2)
+          .relay(amountIn, amountOutMin, path, to, deadlineOverride)
           .then((response: string) => {
             const inputSymbol = trade.inputAmount.currency.symbol
             const outputSymbol = trade.outputAmount.currency.symbol
