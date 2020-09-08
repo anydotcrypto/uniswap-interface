@@ -41,7 +41,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Network fee (est): '}
             </TYPE.black>
-            <QuestionHelper text="The network fee (lowest to high) based on the estimated gas prices. It assumes the transaction consumes ~180k gas." />
+            <QuestionHelper text="Estimated network fee (lowest to high) based on quotes from etherchain." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -54,7 +54,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {isExactIn ? 'To Receive (est)' : 'Maximum sold'}
             </TYPE.black>
-            <QuestionHelper text="It deducts slippage from the trade and the largest network fee estimate. any.sender is refunded the network fee from the swapped ETH." />
+            <QuestionHelper text="Total to receive (estimate) after deducting slippage and the estimated network fee." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
