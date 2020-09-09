@@ -72,7 +72,7 @@ class UniswapExchange {
 
       const gasRefund = {
         gasPayer: gasPayer,
-        gasOverhead: gasOverhead, // Looks like the transaction is doing some weird discounting, so 21k provides ±500 extra gas.
+        gasOverhead: gasOverhead // Looks like the transaction is doing some weird discounting, so 21k provides ±500 extra gas.
       }
 
       const encodeSwap = defaultAbiCoder.encode(
@@ -86,7 +86,7 @@ class UniswapExchange {
           'address',
           'uint',
           'uint',
-          'address',
+          'address'
         ],
         [
           amountIn,
@@ -98,7 +98,7 @@ class UniswapExchange {
           to,
           nonce,
           fromToken.chainId,
-          this.uniswapAddress,
+          this.uniswapAddress
         ]
       )
 
@@ -113,7 +113,7 @@ class UniswapExchange {
         to,
         deadlineDefaulted,
         gasRefund,
-        replayProtection,
+        replayProtection
       ])
     } else {
       throw new Error('Only supports ETH to Token or Token to ETH, assuming a pair exists.')
@@ -141,7 +141,7 @@ export class DaiSwapClient {
       { name: 'name', type: 'string' },
       { name: 'version', type: 'string' },
       { name: 'chainId', type: 'uint256' },
-      { name: 'verifyingContract', type: 'address' },
+      { name: 'verifyingContract', type: 'address' }
     ]
 
     const permitSchema = [
@@ -149,14 +149,14 @@ export class DaiSwapClient {
       { name: 'spender', type: 'address' },
       { name: 'nonce', type: 'uint256' },
       { name: 'expiry', type: 'uint256' },
-      { name: 'allowed', type: 'bool' },
+      { name: 'allowed', type: 'bool' }
     ]
 
     const domain = {
       name: 'Dai Stablecoin',
       version: '1',
       chainId,
-      verifyingContract: dai,
+      verifyingContract: dai
     }
 
     const message = {
@@ -164,22 +164,22 @@ export class DaiSwapClient {
       spender: receiver,
       nonce,
       expiry: expiry,
-      allowed: true,
+      allowed: true
     }
 
     const data = {
       types: {
         EIP712Domain: domainSchema,
-        Permit: permitSchema,
+        Permit: permitSchema
       },
       domain,
       primaryType: 'Permit',
-      message,
+      message
     }
     const sig = splitSignature(
       await (signer.provider as providers.JsonRpcProvider)!.send('eth_signTypedData_v4', [
         await signer.getAddress(),
-        JSON.stringify(data),
+        JSON.stringify(data)
       ])
     )
 
@@ -229,7 +229,7 @@ export class DaiSwapClient {
         true,
         signature.v!,
         signature.r,
-        signature.s,
+        signature.s
       ])
 
       // TODO: do some confidence checks on these input values
@@ -249,14 +249,14 @@ export class DaiSwapClient {
           data: encodedDai,
           to: dai.address,
           callType: CallType.CALL,
-          revertOnFail: true,
+          revertOnFail: true
         },
         {
           data: uniswapData.data,
           to: uniswapData.to,
           callType: CallType.CALL,
-          revertOnFail: true,
-        },
+          revertOnFail: true
+        }
       ])
     } else {
       // TODO: do some confidence checks on these input values
@@ -272,7 +272,7 @@ export class DaiSwapClient {
       )
     }
 
-    const estimatedGas = await this.signer.provider!.estimateGas({ to: dataTx.to, data: dataTx.data })
+    const estimatedGas = 300000 // await this.signer.provider!.estimateGas({ to: dataTx.to, data: dataTx.data })
 
     // sign this for the daiswapper?
     const daiSwapTx: DaiSwapRelayTransaction = {
@@ -281,13 +281,13 @@ export class DaiSwapClient {
       type: 'daiswap',
       chainId: this.chainId as 1 | 3,
       from: signerAddress,
-      gasLimit: estimatedGas.toNumber() + 10000, // Extra overhead to be safe
+      gasLimit: estimatedGas
     }
 
     const response = await crossFetch(this.apiUrl + '/daiswap', {
       method: 'POST',
       body: JSON.stringify(daiSwapTx),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' }
     })
 
     // expect a success

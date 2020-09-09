@@ -62,15 +62,18 @@ export default function OpeningMessage() {
               ' gwei before quickly increasing the network fee. Optimistically catching super-low fees. '}
           </Text>
         </RowBetween> */}
-        <RowBetween align="flex-start">
+        {/* <RowBetween align="flex-start">
           <Text fontSize={12} fontWeight={'bold'} margin={'0 auto'}>
             {'Out of ETH but still have DAI? '}
           </Text>
-        </RowBetween>
+        </RowBetween> */}
         <RowBetween align="flex-start">
           <Text fontSize={12} fontWeight={500} margin={'0 auto'}>
+            <ExternalLink href="https://anydot.dev">
+              <span style={{ color: '#1133db' }}>{'any.sender'}</span>
+            </ExternalLink>
             {
-              'any.sender will pay the transaction fee for you to swap some DAI into ETH and then refund ourselves from the trade.'
+              ' will pay the transaction fee for you to swap some DAI into ETH and then refund ourselves from the trade.'
             }
           </Text>
         </RowBetween>

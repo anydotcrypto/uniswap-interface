@@ -90,8 +90,8 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //     description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
   //     href: null,
   //     color: '#4196FC',
-  //     mobile: true,
-  //   },
+  //     mobile: true
+  //   }
 }
 
 export const NetworkContextName = 'NETWORK'
