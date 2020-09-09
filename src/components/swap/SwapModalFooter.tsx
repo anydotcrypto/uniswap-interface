@@ -89,7 +89,7 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {'Network fee (est): '}
             </TYPE.black>
-            <QuestionHelper text="The network fee (lowest to high) based on the estimated gas prices. It assumes the transaction consumes ~180k gas." />
+            <QuestionHelper text="The lowest and highest estimated network fee." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>
@@ -102,7 +102,7 @@ export default function SwapModalFooter({
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               {isExactIn ? 'To Receive (est)' : 'Maximum sold'}
             </TYPE.black>
-            <QuestionHelper text="It deducts slippage from the trade and the largest network fee estimate. any.sender is refunded the network fee from the swapped ETH." />
+            <QuestionHelper text="Deducts slippage and the any.sender refund from the swap." />
           </RowFixed>
           <RowFixed>
             <TYPE.black color={theme.text1} fontSize={14}>

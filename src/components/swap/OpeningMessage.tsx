@@ -76,11 +76,20 @@ export default function OpeningMessage() {
         </RowBetween>
         <Row align="flex-start">
           <Text fontSize={12} fontWeight={500}>
-            {'This is a beta project and it has not been audited. Check our '}
+            {'This is an unaudited beta project. Check our '}
             <ExternalLink href="https://etherscan.io/address/0xb4407a8a0bc8e41fe269963a282c8829c9b975fa#code">
               <span style={{ color: '#1133db' }}>{'modified router contract '}</span>
             </ExternalLink>
             {'and use at your own risk.'}
+          </Text>
+        </Row>
+
+        <Row align="flex-start">
+          <Text fontSize={12} fontWeight={500}>
+            {'Want Ropsten DAI or to chat with us?'}
+            <ExternalLink href="https://t.me/anydotsender">
+              <span style={{ color: '#1133db' }}>{' Join us on Telegram.'}</span>
+            </ExternalLink>
           </Text>
         </Row>
 
