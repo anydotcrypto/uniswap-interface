@@ -57,6 +57,13 @@ import { ClickableText } from '../Pool/styleds'
 import StickyFooter from '../../components/Footer/Footer'
 import StickyHeader from '../../components/Header/index'
 
+const PageTitle = styled.div`
+  font-size: 54px;
+  color: #191a1c;
+  padding-bottom: 10px;
+  font-weight: bold;
+`
+
 export default function Swap() {
   useDefaultsFromURLSearch()
 
@@ -261,6 +268,7 @@ export default function Swap() {
   return (
     <>
       {showWarning && <TokenWarningCards currencies={currencies} />}
+      <PageTitle>Out of Eth?</PageTitle>
       <OpeningMessage />
       <AppBody disabled={showWarning}>
         {/* <SwapPoolTabs active={'swap'} /> */}

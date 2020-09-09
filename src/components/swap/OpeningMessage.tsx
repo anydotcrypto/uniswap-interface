@@ -28,12 +28,22 @@ const AdvancedDetailsHeader = styled.div<{ show: boolean }>`
 `
 
 export default function OpeningMessage() {
-  const state = useSelector<AppState, AppState['gasprice']>((state) => state.gasprice)
+  const state = useSelector<AppState, AppState['gasprice']>(state => state.gasprice)
 
   const { lowestEstimateInGwei } = estimateGasCosts(state)
 
+  //   .main-title {
+  //     font-family: "Roboto Mono", monospace;
+  //     max-width: 350px;
+  //     margin: 170px 0 80px 0;
+  //     font-size: 68px;
+  //     color: white;
+  //     padding-bottom: 10px;
+  // }
+
   return (
     <AdvancedDetailsHeader show={true}>
+      <Text fontSize={68}></Text>
       <AutoColumn gap={'md'}>
         {/* <RowBetween align="flex-start">
           <Text fontSize={12} fontWeight={'bold'} margin={'0 auto'}>
@@ -54,7 +64,7 @@ export default function OpeningMessage() {
         </RowBetween> */}
         <RowBetween align="flex-start">
           <Text fontSize={12} fontWeight={'bold'} margin={'0 auto'}>
-            {'Ran out of ETH but still have DAI? '}
+            {'Out of ETH but still have DAI? '}
           </Text>
         </RowBetween>
         <RowBetween align="flex-start">
