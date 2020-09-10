@@ -59,7 +59,7 @@ import StickyHeader from '../../components/Header/index'
 
 const PageTitle = styled.div`
   font-size: 54px;
-  color: #191a1c;
+  color: #32353a;
   padding-bottom: 10px;
   font-weight: bold;
 `
