@@ -43,16 +43,16 @@ function deserializeToken(serializedToken: SerializedToken): Token {
 }
 
 export function useIsDarkMode(): boolean {
-  const { userDarkMode, matchesDarkMode } = useSelector<
-    AppState,
-    { userDarkMode: boolean | null; matchesDarkMode: boolean }
-  >(
-    ({ user: { matchesDarkMode, userDarkMode } }) => ({
-      userDarkMode,
-      matchesDarkMode
-    }),
-    shallowEqual
-  )
+  //   const { userDarkMode, matchesDarkMode } = useSelector<
+  //     AppState,
+  //     { userDarkMode: boolean | null; matchesDarkMode: boolean }
+  //   >(
+  //     ({ user: { matchesDarkMode, userDarkMode } }) => ({
+  //       userDarkMode,
+  //       matchesDarkMode
+  //     }),
+  //     shallowEqual
+  //   )
 
   return false
   //   userDarkMode === null ? matchesDarkMode : userDarkMode
