@@ -1,12 +1,13 @@
 import { Token, WETH, ChainId } from '@uniswap/sdk'
-import { Signer, ContractFactory, BigNumber, utils } from 'ethers'
+import { Signer, ContractFactory, BigNumber, utils, Signature } from 'ethers'
 import { providers } from 'ethers'
 import crossFetch from 'cross-fetch'
 import { MultiSender, CallType } from '@anydotcrypto/metatransactions'
 import { Fetcher, Route, Trade, TokenAmount, Percent, Price } from '@uniswap/sdk'
-import { splitSignature } from 'ethers/lib/utils'
+import { splitSignature, joinSignature, verifyMessage } from 'ethers/lib/utils'
 import daiJson from './contractAbi/DAI.json'
 import router03Json from './contractAbi/router03.json'
+import { walletconnect } from '../connectors'
 const { keccak256, defaultAbiCoder, arrayify } = utils
 
 const DAIMainnet = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18)
@@ -72,7 +73,7 @@ class UniswapExchange {
 
       const gasRefund = {
         gasPayer: gasPayer,
-        gasOverhead: gasOverhead // Looks like the transaction is doing some weird discounting, so 21k provides ±500 extra gas.
+        gasOverhead: gasOverhead, // Looks like the transaction is doing some weird discounting, so 21k provides ±500 extra gas.
       }
 
       const encodeSwap = defaultAbiCoder.encode(
@@ -86,7 +87,7 @@ class UniswapExchange {
           'address',
           'uint',
           'uint',
-          'address'
+          'address',
         ],
         [
           amountIn,
@@ -98,13 +99,23 @@ class UniswapExchange {
           to,
           nonce,
           fromToken.chainId,
-          this.uniswapAddress
+          this.uniswapAddress,
         ]
       )
 
       const hSwap = keccak256(encodeSwap)
-      const signature = await wallet.signMessage(arrayify(hSwap))
-      const replayProtection = { signer: to, nonce, signature }
+      let signature: Signature
+
+      // Only works if wallet connect is "connected"
+      if (walletconnect.walletConnectProvider) {
+        const provider = wallet.provider! as providers.Web3Provider
+        const res = await provider.send('personal_sign', [await wallet.getAddress(), hSwap])
+        signature = splitSignature(res)
+      } else {
+        signature = splitSignature(await wallet.signMessage(arrayify(hSwap)))
+      }
+
+      const replayProtection = { signer: to, nonce, signature: joinSignature(signature) }
 
       data = uniswapV2Router.interface.encodeFunctionData('metaSwapExactTokensForETH', [
         amountIn.toString(),
@@ -113,7 +124,7 @@ class UniswapExchange {
         to,
         deadlineDefaulted,
         gasRefund,
-        replayProtection
+        replayProtection,
       ])
     } else {
       throw new Error('Only supports ETH to Token or Token to ETH, assuming a pair exists.')
@@ -141,7 +152,7 @@ export class DaiSwapClient {
       { name: 'name', type: 'string' },
       { name: 'version', type: 'string' },
       { name: 'chainId', type: 'uint256' },
-      { name: 'verifyingContract', type: 'address' }
+      { name: 'verifyingContract', type: 'address' },
     ]
 
     const permitSchema = [
@@ -149,14 +160,14 @@ export class DaiSwapClient {
       { name: 'spender', type: 'address' },
       { name: 'nonce', type: 'uint256' },
       { name: 'expiry', type: 'uint256' },
-      { name: 'allowed', type: 'bool' }
+      { name: 'allowed', type: 'bool' },
     ]
 
     const domain = {
       name: 'Dai Stablecoin',
       version: '1',
       chainId,
-      verifyingContract: dai
+      verifyingContract: dai,
     }
 
     const message = {
@@ -164,22 +175,22 @@ export class DaiSwapClient {
       spender: receiver,
       nonce,
       expiry: expiry,
-      allowed: true
+      allowed: true,
     }
 
     const data = {
       types: {
         EIP712Domain: domainSchema,
-        Permit: permitSchema
+        Permit: permitSchema,
       },
       domain,
       primaryType: 'Permit',
-      message
+      message,
     }
     const sig = splitSignature(
       await (signer.provider as providers.JsonRpcProvider)!.send('eth_signTypedData_v4', [
         await signer.getAddress(),
-        JSON.stringify(data)
+        JSON.stringify(data),
       ])
     )
 
@@ -229,7 +240,7 @@ export class DaiSwapClient {
         true,
         signature.v!,
         signature.r,
-        signature.s
+        signature.s,
       ])
 
       // TODO: do some confidence checks on these input values
@@ -249,14 +260,14 @@ export class DaiSwapClient {
           data: encodedDai,
           to: dai.address,
           callType: CallType.CALL,
-          revertOnFail: true
+          revertOnFail: true,
         },
         {
           data: uniswapData.data,
           to: uniswapData.to,
           callType: CallType.CALL,
-          revertOnFail: true
-        }
+          revertOnFail: true,
+        },
       ])
     } else {
       // TODO: do some confidence checks on these input values
@@ -281,13 +292,13 @@ export class DaiSwapClient {
       type: 'daiswap',
       chainId: this.chainId as 1 | 3,
       from: signerAddress,
-      gasLimit: estimatedGas
+      gasLimit: estimatedGas,
     }
 
     const response = await crossFetch(this.apiUrl + '/daiswap', {
       method: 'POST',
       body: JSON.stringify(daiSwapTx),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     })
 
     // expect a success

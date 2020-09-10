@@ -205,7 +205,7 @@ export default function Web3Status() {
       return (
         <Web3StatusError onClick={toggleWalletModal}>
           <NetworkIcon />
-          <Text>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}</Text>
+          <Text>{error instanceof UnsupportedChainIdError ? 'Wrong N2etwork' : 'Error'}</Text>
         </Web3StatusError>
       )
     } else {
